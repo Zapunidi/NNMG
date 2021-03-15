@@ -1,11 +1,15 @@
 from mido import MidiFile
 
 
-mid = MidiFile("RawData\MidiWorld\Pop\Ace_of_Base_-_All_That_She_Wants.mid")
+path = "WithoutMetaMessageData/MidiWorld/Pop/ABBA_-_Gimme_Gimme_Gimme.mid"
+path1 = "test/0/0.mid"
+midi = MidiFile(path1)
 
 
-for i, track in enumerate(mid.tracks):
-    print('Track {}: {}'.format(i, track.name))
+# print(midi.length)
+
+for i, track in enumerate(midi.tracks):
+    print('Track {}: {} Messages: {}'.format(i, track.name, len(track)))
     for msg in track:
+        # if not (msg.is_meta):
         print(msg)
-
