@@ -2,7 +2,7 @@ import os
 from mido import MidiFile, MidiTrack, MetaMessage
 
 
-
+# Создает путь, если его нет.
 def createPath(path):
     head, tail = os.path.split(path)
 
@@ -13,6 +13,7 @@ def createPath(path):
         os.mkdir(path)
 
 
+# Возвращает путь без первого
 def pathWithoutFirstFolder(path):
     folders = []
     while path != "":
@@ -23,12 +24,10 @@ def pathWithoutFirstFolder(path):
 
     return os.path.join(*folders[1:])
 
-folders = ["Classic", "Pop", "Rock"]
-folder = folders[2]
-print(folder)
 
+# Цикл по всем файлам
 number_file = 0
-for root, dirs, files in os.walk(os.path.join("RawData/MidiWorld", folder)):
+for root, dirs, files in os.walk("RawData/MidiWorld"):
     for file in files:
         if os.path.splitext(file)[1] == ".mid" or os.path.splitext(file)[1] == ".midi":
             number_file += 1
@@ -36,6 +35,7 @@ for root, dirs, files in os.walk(os.path.join("RawData/MidiWorld", folder)):
 
 
             try:
+                # Открываем файл и копируем все сообщения, кроме мета сообщений
                 midi = MidiFile(os.path.join(root, file))
 
                 newMidi = MidiFile()
@@ -51,6 +51,7 @@ for root, dirs, files in os.walk(os.path.join("RawData/MidiWorld", folder)):
                             messages += 1
                     if messages != 0:
                         newMidi.tracks.append(newTrack)
+                # Устанавливаем tempo
                 track0.append(MetaMessage("set_tempo", tempo=int(500000/newMidi.length*midi.length), time=0))
 
                 path = os.path.join("WithoutMetaMessageData", pathWithoutFirstFolder(root))

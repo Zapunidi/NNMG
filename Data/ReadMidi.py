@@ -1,12 +1,9 @@
 from mido import MidiFile
 
 
-path = "WithoutMetaMessageData/MidiWorld/Pop/ABBA_-_Gimme_Gimme_Gimme.mid"
-path1 = "test/0/0.mid"
+path = "au_22_bar.gp3"
+path1 = "test/0.mid"
 midi = MidiFile(path1)
-
-
-# print(midi.length)
 
 for i, track in enumerate(midi.tracks):
     print('Track {}: {} Messages: {}'.format(i, track.name, len(track)))
