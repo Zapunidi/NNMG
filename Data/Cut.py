@@ -27,14 +27,10 @@ def pathWithoutFirstFolder(path):
 
 # Отдельный класс для инструмента.
 class Instrument(object):
-    def __init__(self, tempo, ticks_per_beat):
+    def __init__(self):
         self.track = MidiTrack()
         self.notes = []
         self.program = None
-
-        # ВременнЫе характеристики
-        self.tempo = tempo
-        self.ticks_per_beat = ticks_per_beat
 
         self.currentNote = {}
         self.firstNote = True
@@ -55,10 +51,8 @@ class Instrument(object):
             msg.time = globalTime - self.time
             self.time += msg.time
 
-
         for note in self.currentNote.keys():
             self.currentNote[note] += msg.time
-
 
         def add_note_on(note, time):
             self.track.append(Message("note_on", channel=0, note=note, time=time))
@@ -100,13 +94,9 @@ class Instrument(object):
                 self.firstNote = False
 
     # Сохраняем дорожку инструмента в файл
-    def save(self, path, startTrack):
+    def save(self, path):
         def saveTrack(track):
             midi = MidiFile()
-            midi.tracks.append(startTrack)
-
-            while track[1].type != "note_on" and len(track) > 3:
-                track.pop(1)
             midi.tracks.append(track)
 
             if midi.length > 10 and midi.length < 60:
@@ -118,16 +108,24 @@ class Instrument(object):
             track.append(Message("program_change", program=self.program, time=0))
             for msg in self.track:
                 # Режем трек, если между командами разница больше, чем 2c
-                if tick2second(msg.time, self.ticks_per_beat, self.tempo) > 2:
-                    saveTrack(track)
+                if tick2second(msg.time, 480, 500000) > 2:
+                    if msg.type == "note_on":
+                        saveTrack(track)
 
-                    track = MidiTrack()
-                    track.append(Message("program_change", program=self.program, time=0))
-                    msg.time = 0
+                        track = MidiTrack()
+                        track.append(Message("program_change", program=self.program, time=0))
+                        msg.time = 0
+                    elif msg.type == "note_off":
+                        msg.time = round(second2tick(2, 480, 500000))
+                        track.append(msg)
+                        saveTrack(track)
+
+                        track = MidiTrack()
+                        track.append(Message("program_change", program=self.program, time=0))
+                        continue
 
                 track.append(msg)
             saveTrack(track)
-
 
 
 # Итератор файла миди одновременно по всем трекам.
@@ -160,41 +158,39 @@ class IteratorMidi(object):
 
 
 
-
 number_file = 0
-for root, dirs, files in os.walk("WithoutMetaMessageData/MidiWorld"):
+for root, dirs, files in os.walk("WithoutMetaMessageData"):
     for file in files:
         if (os.path.splitext(file)[1] == ".mid" or os.path.splitext(file)[1] == ".midi"):
             number_file += 1
             print(number_file, end="\r")
             
             # try:
-            path = os.path.join(os.path.join("SortData", pathWithoutFirstFolder(root), os.path.splitext(file)[0]))
+            path = os.path.join(os.path.join("CutData", pathWithoutFirstFolder(root)))
 
             midi = MidiFile(os.path.join(root, file))
             createPath(path)
-            midi.save(os.path.join(path, file))
 
-            instruments = [Instrument(midi.tracks[0][0].tempo, midi.ticks_per_beat) for i in range(16)]  # Разделяем по каналам.
+            instruments = [Instrument() for i in range(16)]  # Разделяем по каналам.
             # Цикл по всем сообщениям
             globalTime = 0
-            for msg in IteratorMidi(midi.tracks[1:]):
+            for msg in IteratorMidi(midi.tracks):
                 globalTime += msg.time
                 if msg.type in ["program_change", "note_on", "note_off", "control_change"]:
                     if msg.channel != 10:
                         # Барабаны не рассматриваем.
                         if msg.type == "program_change":
-                            instruments[msg.channel].save(path, midi.tracks[0])
+                            instruments[msg.channel].save(path)
 
-                            instruments[msg.channel] = Instrument(midi.tracks[0][0].tempo, midi.ticks_per_beat)
+                            instruments[msg.channel] = Instrument()
                             instruments[msg.channel].setProgram(msg.program)
                         else:
                             instruments[msg.channel].addMessage(msg, globalTime)
 
             for instrument in instruments:
-                instrument.save(path, midi.tracks[0])
+                instrument.save(path)
             # except:
-            #     pass
+            #      pass
 
 
 
