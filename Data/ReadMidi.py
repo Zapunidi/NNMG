@@ -1,13 +1,9 @@
 from mido import MidiFile
 
 
-path = "WithoutMetaMessageData/Classic/beeth9-2.mid"
-path1 = "test.mid"
+path = "CutData/Classic/2.mid"
 midi = MidiFile(path)
-midi1 = MidiFile(path1)
 
-print(midi.length)
-print(midi1.length)
 
 for i, track in enumerate(midi.tracks):
     print('Track {}: {} Messages: {}'.format(i, track.name, len(track)))
