@@ -3,7 +3,9 @@ import os
 import json
 
 
-dataArray = []
+dataMessages = []
+dataValues = []
+dataDTs = []
 
 number_file = 0
 for root, dirs, files in os.walk("CutData/Classic"):
@@ -16,22 +18,41 @@ for root, dirs, files in os.walk("CutData/Classic"):
                 midi = MidiFile(os.path.join(root, file))
                 track = midi.tracks[0]  # В файле всего один трек
 
-                data = []          # message, note, time
-                for msg in track:
-                    if msg.type == "note_on":
-                        data.append([1, msg.note, msg.time])
+                if len(track) > 100:
+                    messages = []
+                    values = []
+                    DTs = []
+                    for msg in track:
+                        if msg.type == "note_on":
+                            messages.append(1)
+                            values.append(msg.note)
+                            DTs.append(msg.time)
 
-                    if msg.type == "note_off":
-                        data.append([0, msg.note, msg.time])
+                        if msg.type == "note_off":
+                            messages.append(0)
+                            values.append(msg.note)
+                            DTs.append(msg.time)
 
-                dataArray.append(data)
+                    dataMessages.append(messages)
+                    dataValues.append(values)
+                    dataDTs.append(DTs)
             except:
                 print("Corrupt file: "+str(number_file))
 
 
 
-file = open("dataArray.json", "w")
-file.write(json.dumps(dataArray))
+file = open("dataMessages.json", "w")
+file.write(json.dumps(dataMessages))
+file.close()
+
+file = open("dataValues.json", "w")
+file.write(json.dumps(dataValues))
+file.close()
+
+file = open("dataDTs.json", "w")
+file.write(json.dumps(dataDTs))
+file.close()
+
 input("Complete!")
 
 
