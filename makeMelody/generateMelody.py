@@ -16,7 +16,7 @@ if gpus:
     print(e)
 
 
-def generate_melody(model, namefile, num_generate, messages, values, DTs):
+def generate_melody(model, num_generate, messages, values, DTs):
     melody = []
     for message, value, DT in zip(messages, values, DTs):
         melody.append((message, value, DT))
@@ -55,10 +55,14 @@ def generate_melody(model, namefile, num_generate, messages, values, DTs):
 
 model = createModel()
 model.load_weights("weights.h5")
-melody = generate_melody(model, "melody.midi", 100, messages=[1], values=[60], DTs=[0])
+melody = generate_melody(model, 1000,
+                         messages=[1, 1, 1],
+                         values=[60, 64, 67],
+                         DTs=[0, 0, 0])
 
 file = open("melody.json", "w")
 file.write(json.dumps(melody))
 file.close()
+input("Complete!")
 
 

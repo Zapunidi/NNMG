@@ -8,7 +8,7 @@ dataValues = []
 dataDTs = []
 
 number_file = 0
-for root, dirs, files in os.walk("CutData/Classic"):
+for root, dirs, files in os.walk("CutData/Pop"):
     for file in files:
         if (os.path.splitext(file)[1] == ".mid" or os.path.splitext(file)[1] == ".midi"):
             number_file += 1
