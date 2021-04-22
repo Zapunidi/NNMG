@@ -54,11 +54,11 @@ def generate_melody(model, num_generate, messages, values, DTs):
 
 
 model = createModel()
-model.load_weights("Weights/V1.h5")
+model.load_weights("weights.h5")
 melody = generate_melody(model, 500,
-                         messages=[1, 1, 1],
-                         values=[60, 64, 67],
-                         DTs=[0, 0, 0])
+                         messages=[1],
+                         values=[60],
+                         DTs=[0])
 
 file = open("melody.json", "w")
 file.write(json.dumps(melody))

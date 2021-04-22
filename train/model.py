@@ -7,16 +7,22 @@ def createModel():
     inputValue = tf.keras.Input(shape=(None, 128), name="inputValue")
     inputDT = tf.keras.Input(shape=(None, 21), name="inputDT")
 
-    gruMessage = tf.keras.layers.GRU(32, return_sequences=True, name="gruMessage")(inputMessage)
-    gruValue = tf.keras.layers.GRU(32, return_sequences=True, name="gruValue")(inputValue)
-    gruDT = tf.keras.layers.GRU(32, return_sequences=True, name="gruDT")(inputDT)
+    x = tf.keras.layers.concatenate([inputDT, inputMessage, inputValue], name="concatenateDT")
+    gruDT = tf.keras.layers.GRU(32, return_sequences=True)(x)
+    gruDT = tf.keras.layers.GRU(32, return_sequences=True)(gruDT)
+    outputDT = tf.keras.layers.Dense(21, activation="softmax", name="outputDT")(gruDT)
 
-    x = tf.keras.layers.concatenate([gruMessage, gruValue, gruDT], name="concatenate")
-    gru = tf.keras.layers.GRU(128, return_sequences=True, name="gruGlobal")(x)
+    x = tf.keras.layers.concatenate([inputDT, inputMessage, inputValue, outputDT], name="concatenateMessage")
+    gruMessage = tf.keras.layers.GRU(32, return_sequences=True)(x)
+    gruMessage = tf.keras.layers.GRU(32, return_sequences=True)(gruMessage)
+    outputMessage = tf.keras.layers.Dense(2, activation="softmax", name="outputMessage")(gruMessage)
 
-    outputMessage = tf.keras.layers.Dense(2, name="outputMessage")(gru)
-    outputValue = tf.keras.layers.Dense(128, name="outputValue")(gru)
-    outputDT = tf.keras.layers.Dense(21, name="outputDT")(gru)
+    x = tf.keras.layers.concatenate([inputDT, inputMessage, inputValue, outputDT, outputMessage], name="concatenateValue")
+    gruValue = tf.keras.layers.GRU(128, return_sequences=True)(x)
+    gruValue = tf.keras.layers.GRU(128, return_sequences=True)(gruValue)
+    gruValue = tf.keras.layers.GRU(128, return_sequences=True)(gruValue)
+    outputValue = tf.keras.layers.Dense(128, activation="softmax", name="outputValue")(gruValue)
+
     return tf.keras.Model(inputs=[inputMessage, inputValue, inputDT],
                           outputs=[outputMessage, outputValue, outputDT])
 
