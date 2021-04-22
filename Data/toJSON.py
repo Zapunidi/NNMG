@@ -8,7 +8,7 @@ dataValues = []
 dataDTs = []
 
 number_file = 0
-for root, dirs, files in os.walk("CutData/Pop"):
+for root, dirs, files in os.walk("CutData/Classic"):
     for file in files:
         if (os.path.splitext(file)[1] == ".mid" or os.path.splitext(file)[1] == ".midi"):
             number_file += 1
@@ -22,14 +22,15 @@ for root, dirs, files in os.walk("CutData/Pop"):
                     messages = []
                     values = []
                     DTs = []
+                    chanells = []
                     for msg in track:
-                        if msg.type == "note_on":
-                            messages.append(1)
-                            values.append(msg.note)
-                            DTs.append(msg.time)
-
                         if msg.type == "note_off":
                             messages.append(0)
+                            values.append(msg.note)
+                            DTs.append(msg.time)
+                            
+                        if msg.type == "note_on":
+                            messages.append(1)
                             values.append(msg.note)
                             DTs.append(msg.time)
 

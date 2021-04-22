@@ -99,7 +99,7 @@ class Instrument(object):
             midi = MidiFile()
             midi.tracks.append(track)
 
-            if midi.length > 10 and midi.length < 60:
+            if midi.length > 10:
                 createPath(path)
                 midi.save(os.path.join(path, str(len(os.listdir(path))) + ".mid"))
 
@@ -159,13 +159,12 @@ class IteratorMidi(object):
 
 
 number_file = 0
-for root, dirs, files in os.walk("WithoutMetaMessageData"):
+for root, dirs, files in os.walk("OneTempoData"):
     for file in files:
         if (os.path.splitext(file)[1] == ".mid" or os.path.splitext(file)[1] == ".midi"):
             number_file += 1
             print(number_file, end="\r")
-            
-            # try:
+
             path = os.path.join(os.path.join("CutData", pathWithoutFirstFolder(root)))
 
             midi = MidiFile(os.path.join(root, file))
@@ -189,8 +188,7 @@ for root, dirs, files in os.walk("WithoutMetaMessageData"):
 
             for instrument in instruments:
                 instrument.save(path)
-            # except:
-            #      pass
+
 
 
 

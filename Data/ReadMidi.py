@@ -1,7 +1,7 @@
 from mido import MidiFile
 
 
-path = "CutData/Classic/12887.mid"
+path = "OneTrackData/Classic/3_anitra.mid"
 midi = MidiFile(path)
 
 print(len(midi.tracks))
