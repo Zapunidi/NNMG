@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import json
-from train.model import createModel
+from train.models.V2 import createModel
 
 gpus = tf.config.experimental.list_physical_devices('GPU')
 if gpus:
