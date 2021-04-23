@@ -1,7 +1,8 @@
 import tensorflow as tf
 import numpy as np
 import json
-from train.models.V1 import createModel
+import matplotlib.pyplot as plt
+from train.models.V2 import createModel
 
 
 gpus = tf.config.experimental.list_physical_devices('GPU')
@@ -18,9 +19,9 @@ if gpus:
 
 
 # To one_hot
-dataMessages = json.load(open("slicedDataMessages.json", "r"))
-dataValues = json.load(open("slicedDataValues.json", "r"))
-dataDTs = json.load(open("slicedDataDTs.json", "r"))
+dataMessages = json.load(open("processingData/slicedDataMessages.json", "r"))
+dataValues = json.load(open("processingData/slicedDataValues.json", "r"))
+dataDTs = json.load(open("processingData/slicedDataDTs.json", "r"))
 XMessages, XValues, XDTs, YMessages, YValues, YDTs = [], [], [], [], [], []
 for messages, values, DTs in zip(dataMessages, dataValues, dataDTs):
      XMessages.append(messages[:-1])
@@ -31,10 +32,16 @@ for messages, values, DTs in zip(dataMessages, dataValues, dataDTs):
      YDTs.append(DTs[1:])
 XMessages = tf.one_hot(XMessages, depth=2, axis=-1)
 XValues = tf.one_hot(XValues, depth=128, axis=-1)
-XDTs = tf.one_hot(np.round(np.asarray(XDTs)/100), depth=21, axis=-1)
+
+XDTs = np.round(np.asarray(XDTs)/100)
+XDTs[XDTs > 20] = 20
+XDTs = tf.one_hot(XDTs, depth=21, axis=-1)
+
 YMessages = np.asarray(YMessages)
 YValues = np.asarray(YValues)
 YDTs = np.round(np.asarray(YDTs)/100)
+YDTs[YDTs > 20] = 20
+
 
 
 # Model
@@ -44,8 +51,14 @@ model.compile(optimizer='adam', loss={"outputMessage": tf.losses.SparseCategoric
                                       "outputDT": tf.losses.SparseCategoricalCrossentropy(from_logits=True)})
 
 # Fit
+callback = tf.keras.callbacks.ModelCheckpoint(filepath="weights/V2.ckpt", save_weights_only=True, verbose=5)
 history = model.fit({"inputMessage": XMessages, "inputValue": XValues, "inputDT": XDTs},
     {"outputMessage": YMessages, "outputValue": YValues, "outputDT": YDTs},
-    batch_size=int(len(XDTs)**0.5), epochs=100)
-model.save_weights("weights.h5")
+    batch_size=int(len(XDTs)**0.5), epochs=5, callbacks=[callback])
+
+
+for key in history.history:
+    plt.plot(history.history[key], label=key)
+plt.legend()
+plt.show()
 
