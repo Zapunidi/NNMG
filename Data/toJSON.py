@@ -8,7 +8,7 @@ dataValues = []
 dataDTs = []
 
 number_file = 0
-for root, dirs, files in os.walk("CutData/Classic"):
+for root, dirs, files in os.walk("OneTrackOneChannelData/Classic"):
     for file in files:
         if number_file < 1000:
             if (os.path.splitext(file)[1] == ".mid" or os.path.splitext(file)[1] == ".midi"):
@@ -24,15 +24,23 @@ for root, dirs, files in os.walk("CutData/Classic"):
                     DTs = []
 
                     for msg in track:
-                        if msg.type == "note_off":
-                            messages.append(0)
-                            values.append(msg.note)
-                            DTs.append(msg.time)
+                        if msg.time > 2000:
+                            dataMessages.append(messages)
+                            dataValues.append(values)
+                            dataDTs.append(DTs)
+                            messages = []
+                            values = []
+                            DTs = []
+                        else:
+                            if msg.type == "note_off":
+                                messages.append(0)
+                                values.append(msg.note)
+                                DTs.append(msg.time)
 
-                        if msg.type == "note_on":
-                            messages.append(1)
-                            values.append(msg.note)
-                            DTs.append(msg.time)
+                            if msg.type == "note_on":
+                                messages.append(1)
+                                values.append(msg.note)
+                                DTs.append(msg.time)
 
                     dataMessages.append(messages)
                     dataValues.append(values)

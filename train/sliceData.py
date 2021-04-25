@@ -12,7 +12,7 @@ slicedDataValues = []
 slicedDataDTs = []
 
 number = 0
-length = 101
+length = 501
 for messages, values, DTs in zip(dataMessages, dataValues, dataDTs):
     number += 1
     print(number, end="\r")

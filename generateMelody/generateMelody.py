@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import json
-from train.models.V2 import createModel
+from V2 import createModel
 
 gpus = tf.config.experimental.list_physical_devices('GPU')
 if gpus:
@@ -35,10 +35,10 @@ def generate_melody(model, num_generate, messages, values, DTs):
         PrMessage = PrMessage[0][-1]
         PrValues = PrValues[0][-1]
         PrDT = PrDT[0][-1]
-
-        message = tf.random.categorical(PrMessage.numpy().reshape(1, 2), num_samples=1)
-        value = tf.random.categorical(PrValues.numpy().reshape(1, 128), num_samples=1)
-        DT = tf.random.categorical(PrDT.numpy().reshape(1, 21), num_samples=1)
+        
+        message = tf.random.categorical(tf.math.log(PrMessage.numpy().reshape(1, 2)), num_samples=1)
+        value = tf.random.categorical(tf.math.log(PrValues.numpy().reshape(1, 128)), num_samples=1)
+        DT = tf.random.categorical(tf.math.log(PrDT.numpy().reshape(1, 21)), num_samples=1)
 
         messages = tf.one_hot(message, depth=2, axis=-1)
         values = tf.one_hot(value, depth=128, axis=-1)
@@ -54,7 +54,7 @@ def generate_melody(model, num_generate, messages, values, DTs):
 
 
 model = createModel()
-model.load_weights("weights.h5")
+#model.load_weights("V2.h5")
 melody = generate_melody(model, 500,
                          messages=[1],
                          values=[60],
