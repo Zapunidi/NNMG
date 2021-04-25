@@ -31,16 +31,13 @@ for messages, values, DTs in zip(dataMessages, dataValues, dataDTs):
      YValues.append(values[1:])
      YDTs.append(DTs[1:])
 XMessages = tf.one_hot(XMessages, depth=2, axis=-1)
-XValues = tf.one_hot(XValues, depth=128, axis=-1)
-
-XDTs = np.round(np.asarray(XDTs)/100)
-XDTs[XDTs > 20] = 20
-XDTs = tf.one_hot(XDTs, depth=21, axis=-1)
-
 YMessages = np.asarray(YMessages)
+
+XValues = tf.one_hot(XValues, depth=128, axis=-1)
 YValues = np.asarray(YValues)
+
+XDTs = tf.one_hot(np.round(np.asarray(XDTs)/100), depth=21, axis=-1)
 YDTs = np.round(np.asarray(YDTs)/100)
-YDTs[YDTs > 20] = 20
 
 
 

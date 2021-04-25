@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import json
-from V2 import createModel
+from V1 import createModel
 
 gpus = tf.config.experimental.list_physical_devices('GPU')
 if gpus:
@@ -54,7 +54,7 @@ def generate_melody(model, num_generate, messages, values, DTs):
 
 
 model = createModel()
-#model.load_weights("V2.h5")
+model.load_weights("V1.h5")
 melody = generate_melody(model, 500,
                          messages=[1],
                          values=[60],
