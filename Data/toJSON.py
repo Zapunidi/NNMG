@@ -8,45 +8,43 @@ dataValues = []
 dataDTs = []
 
 number_file = 0
-for root, dirs, files in os.walk("OneTrackOneChannelData/Classic"):
+for root, dirs, files in os.walk("CutData/Classic"):
     for file in files:
-        if number_file < 1000:
-            if (os.path.splitext(file)[1] == ".mid" or os.path.splitext(file)[1] == ".midi"):
-                number_file += 1
-                print(number_file, end="\r")
+        if (os.path.splitext(file)[1] == ".mid" or os.path.splitext(file)[1] == ".midi"):
+            number_file += 1
+            print(number_file, end="\r")
 
-                try:
-                    midi = MidiFile(os.path.join(root, file))
-                    track = midi.tracks[0]  # В файле всего один трек
-                    
-                    messages = []
-                    values = []
-                    DTs = []
+            try:
+                midi = MidiFile(os.path.join(root, file))
+                track = midi.tracks[0]  # В файле всего один трек
 
-                    for msg in track:
-                        if msg.time > 2000:
-                            dataMessages.append(messages)
-                            dataValues.append(values)
-                            dataDTs.append(DTs)
-                            messages = []
-                            values = []
-                            DTs = []
-                        else:
-                            if msg.type == "note_off":
-                                messages.append(0)
-                                values.append(msg.note)
-                                DTs.append(msg.time)
+                messages = []
+                values = []
+                DTs = []
 
-                            if msg.type == "note_on":
-                                messages.append(1)
-                                values.append(msg.note)
-                                DTs.append(msg.time)
+                for msg in track:
+                    if msg.time > 2000:
+                        dataMessages.append(messages)
+                        dataValues.append(values)
+                        dataDTs.append(DTs)
 
-                    dataMessages.append(messages)
-                    dataValues.append(values)
-                    dataDTs.append(DTs)
-                except:
-                    print("Corrupt file: "+str(number_file))
+                        msg.time = 0
+
+                    if msg.type == "note_off":
+                        messages.append(0)
+                        values.append(msg.note)
+                        DTs.append(msg.time)
+
+                    if msg.type == "note_on":
+                        messages.append(1)
+                        values.append(msg.note)
+                        DTs.append(msg.time)
+
+                dataMessages.append(messages)
+                dataValues.append(values)
+                dataDTs.append(DTs)
+            except:
+                print("Corrupt file: "+str(number_file))
 
 
 
