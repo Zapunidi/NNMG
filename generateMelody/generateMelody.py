@@ -52,7 +52,6 @@ def generate_melody(model, num_generate, messages, values, DTs):
 
 
 
-
 model = createModel()
 model.load_weights("V1.h5")
 melody = generate_melody(model, 500,
