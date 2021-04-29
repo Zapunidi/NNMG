@@ -19,9 +19,9 @@ if gpus:
 
 
 # To one_hot
-dataMessages = json.load(open("processingData/slicedDataMessages.json", "r"))
-dataValues = json.load(open("processingData/slicedDataValues.json", "r"))
-dataDTs = json.load(open("processingData/slicedDataDTs.json", "r"))
+dataMessages = json.load(open("../../processingData/slicedDataMessages.json", "r"))
+dataValues = json.load(open("../../processingData/slicedDataValues.json", "r"))
+dataDTs = json.load(open("../../processingData/slicedDataDTs.json", "r"))
 XMessages, XValues, XDTs, YMessages, YValues, YDTs = [], [], [], [], [], []
 for messages, values, DTs in zip(dataMessages, dataValues, dataDTs):
      XMessages.append(messages[:-1])
@@ -33,7 +33,7 @@ for messages, values, DTs in zip(dataMessages, dataValues, dataDTs):
 XMessages = tf.one_hot(XMessages, depth=2, axis=-1)
 YMessages = np.asarray(YMessages)
 
-XValues = tf.one_hot(XValues, depth=128, axis=-1)
+XValues = np.asarray(XValues)
 YValues = np.asarray(YValues)
 
 XDTs = tf.one_hot(np.round(np.asarray(XDTs)/100), depth=21, axis=-1)
