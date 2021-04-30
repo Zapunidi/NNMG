@@ -29,8 +29,8 @@ slicedDataValues = np.asarray(slicedDataValues)
 slicedDataDTs = np.asarray(slicedDataDTs)
 
 np.save("processingData/slicedDataMessages.npy", slicedDataMessages)
-np.save("processingData/slicedDataValues.npy", slicedDataMessages)
-np.save("processingData/slicedDataDTs.npy", slicedDataMessages)
+np.save("processingData/slicedDataValues.npy", slicedDataMValues)
+np.save("processingData/slicedDataDTs.npy", slicedDataDTs)
 
 
 input("Complete!")
