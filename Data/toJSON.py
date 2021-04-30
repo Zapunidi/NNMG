@@ -8,7 +8,7 @@ dataValues = []
 dataDTs = []
 
 number_file = 0
-for root, dirs, files in os.walk("CutData/Classic"):
+for root, dirs, files in os.walk("OneOctaveData/Classic"):
     for file in files:
         if (os.path.splitext(file)[1] == ".mid" or os.path.splitext(file)[1] == ".midi"):
             number_file += 1
@@ -32,11 +32,14 @@ for root, dirs, files in os.walk("CutData/Classic"):
 
                     if msg.type == "note_off":
                         messages.append(0)
-                        values.append(msg.note)
+                        if 0+1 <= msg.note//12 <= 8+1:
+                            values.append(msg.note%12)
                         DTs.append(msg.time)
 
                     if msg.type == "note_on":
                         messages.append(1)
+                        if 0+1 <= msg.note//12 <= 8+1:
+                            values.append(msg.note%12)
                         values.append(msg.note)
                         DTs.append(msg.time)
 

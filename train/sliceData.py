@@ -14,25 +14,24 @@ slicedDataDTs = []
 number = 0
 length = 101
 for messages, values, DTs in zip(dataMessages, dataValues, dataDTs):
-    number += 1
-    print(number, end="\r")
-    for i in range(len(messages)//length):
-        slicedDataMessages.append(messages[i*length:(i+1)*length])
-        slicedDataValues.append(values[i * length:(i + 1) * length])
-        slicedDataDTs.append(DTs[i * length:(i + 1) * length])
+    if number <= 50000:
+        for i in range(len(messages)//length):
+            number += 1
+            print(number, end="\r")
+            
+            slicedDataMessages.append(messages[i*length:(i+1)*length])
+            slicedDataValues.append(values[i * length:(i + 1) * length])
+            slicedDataDTs.append(DTs[i * length:(i + 1) * length])
 
 
-file = open("processingData/slicedDataMessages.json", "w")
-file.write(json.dumps(slicedDataMessages))
-file.close()
+slicedDataMessages = np.asarray(slicedDataMessages)
+slicedDataValues = np.asarray(slicedDataValues)
+slicedDataDTs = np.asarray(slicedDataDTs)
 
-file = open("processingData/slicedDataValues.json", "w")
-file.write(json.dumps(slicedDataValues))
-file.close()
+np.save("processingData/slicedDataMessages.npy", slicedDataMessages)
+np.save("processingData/slicedDataValues.npy", slicedDataMessages)
+np.save("processingData/slicedDataDTs.npy", slicedDataMessages)
 
-file = open("processingData/slicedDataDTs.json", "w")
-file.write(json.dumps(slicedDataDTs))
-file.close()
 
 input("Complete!")
 

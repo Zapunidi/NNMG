@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 import json
 import matplotlib.pyplot as plt
-from train.models.V2 import createModel
+from train.models.V1 import createModel
 
 
 gpus = tf.config.experimental.list_physical_devices('GPU')
@@ -19,9 +19,9 @@ if gpus:
 
 
 # To one_hot
-dataMessages = json.load(open("../../processingData/slicedDataMessages.json", "r"))
-dataValues = json.load(open("../../processingData/slicedDataValues.json", "r"))
-dataDTs = json.load(open("../../processingData/slicedDataDTs.json", "r"))
+dataMessages = np.load("slicedDataMessages.npy")
+dataValues = np.load("slicedDataValues.npy")
+dataDTs = np.load("slicedDataDTs.npy")
 XMessages, XValues, XDTs, YMessages, YValues, YDTs = [], [], [], [], [], []
 for messages, values, DTs in zip(dataMessages, dataValues, dataDTs):
      XMessages.append(messages[:-1])
@@ -30,14 +30,16 @@ for messages, values, DTs in zip(dataMessages, dataValues, dataDTs):
      YMessages.append(messages[1:])
      YValues.append(values[1:])
      YDTs.append(DTs[1:])
+
 XMessages = tf.one_hot(XMessages, depth=2, axis=-1)
 YMessages = np.asarray(YMessages)
-
-XValues = np.asarray(XValues)
+XValues =  tf.one_hot(XValues, depth=12, axis=-1)
 YValues = np.asarray(YValues)
-
-XDTs = tf.one_hot(np.round(np.asarray(XDTs)/100), depth=21, axis=-1)
+XDTs = np.round(np.asarray(XDTs)/100) #tf.one_hot(np.round(np.asarray(XDTs)/100), depth=21, axis=-1)
 YDTs = np.round(np.asarray(YDTs)/100)
+del dataMessages
+del dataValues
+del dataDTs
 
 
 

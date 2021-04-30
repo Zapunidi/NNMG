@@ -23,9 +23,9 @@ def generate_melody(model, num_generate, messages, values, DTs):
 
     messages = tf.one_hot(messages, depth=2, axis=-1)
     messages = tf.reshape(messages, (1, *messages.shape))
-    values = tf.one_hot(values, depth=128, axis=-1)
+    values = np.asarray(values)#tf.one_hot(values, depth=128, axis=-1)
     values = tf.reshape(values, (1, *values.shape))
-    DTs = tf.one_hot(np.round(np.asarray(DTs) / 100), depth=21, axis=-1)
+    DTs = np.round(np.asarray(DTs) / 100)#tf.one_hot(np.round(np.asarray(DTs) / 100), depth=21, axis=-1)
     DTs = tf.reshape(DTs, (1, *DTs.shape))
 
     model.reset_states()
@@ -41,8 +41,10 @@ def generate_melody(model, num_generate, messages, values, DTs):
         DT = tf.random.categorical(tf.math.log(PrDT.numpy().reshape(1, 21)), num_samples=1)
 
         messages = tf.one_hot(message, depth=2, axis=-1)
-        values = tf.one_hot(value, depth=128, axis=-1)
-        DTs = tf.one_hot(DT, depth=21, axis=-1)
+        values = value
+        DTs = DT
+        #values = tf.one_hot(value, depth=128, axis=-1)
+        #DTs = tf.one_hot(DT, depth=21, axis=-1)
 
         melody.append((int(message.numpy()[0][0]),
                        int(value.numpy()[0][0]),
@@ -51,7 +53,7 @@ def generate_melody(model, num_generate, messages, values, DTs):
     return melody
 
 
-
+print("Start!")
 model = createModel()
 model.load_weights("V1.h5")
 melody = generate_melody(model, 500,
