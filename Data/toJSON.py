@@ -40,7 +40,6 @@ for root, dirs, files in os.walk("OneOctaveData/Classic"):
                         messages.append(1)
                         if 0+1 <= msg.note//12 <= 8+1:
                             values.append(msg.note%12)
-                        values.append(msg.note)
                         DTs.append(msg.time)
 
                 dataMessages.append(messages)

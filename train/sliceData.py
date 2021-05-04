@@ -12,9 +12,9 @@ slicedDataValues = []
 slicedDataDTs = []
 
 number = 0
-length = 101
+length = 501
 for messages, values, DTs in zip(dataMessages, dataValues, dataDTs):
-    if number <= 50000:
+    if number <= 10000:
         for i in range(len(messages)//length):
             number += 1
             print(number, end="\r")
@@ -29,7 +29,7 @@ slicedDataValues = np.asarray(slicedDataValues)
 slicedDataDTs = np.asarray(slicedDataDTs)
 
 np.save("processingData/slicedDataMessages.npy", slicedDataMessages)
-np.save("processingData/slicedDataValues.npy", slicedDataMValues)
+np.save("processingData/slicedDataValues.npy", slicedDataValues)
 np.save("processingData/slicedDataDTs.npy", slicedDataDTs)
 
 

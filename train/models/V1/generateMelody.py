@@ -1,7 +1,8 @@
 import tensorflow as tf
 import numpy as np
 import json
-from V1 import createModel
+import random
+from train.models.V1.V1 import createModel
 
 gpus = tf.config.experimental.list_physical_devices('GPU')
 if gpus:
@@ -19,13 +20,13 @@ if gpus:
 def generate_melody(model, num_generate, messages, values, DTs):
     melody = []
     for message, value, DT in zip(messages, values, DTs):
-        melody.append((message, value, DT))
+        melody.append((message, value+60, int(100*DT)))
 
     messages = tf.one_hot(messages, depth=2, axis=-1)
     messages = tf.reshape(messages, (1, *messages.shape))
     values = tf.one_hot(np.asarray(values)%12, depth=12, axis=-1)
     values = tf.reshape(values, (1, *values.shape))
-    DTs = np.round(np.asarray(DTs) / 100)#tf.one_hot(np.round(np.asarray(DTs) / 100), depth=21, axis=-1)
+    DTs = np.asarray(DTs)   #tf.one_hot(np.round(np.asarray(DTs) / 100), depth=21, axis=-1)
     DTs = tf.reshape(DTs, (1, *DTs.shape))
 
     model.reset_states()
@@ -52,14 +53,24 @@ def generate_melody(model, num_generate, messages, values, DTs):
     return melody
 
 
-print("Start!")
-model = createModel()
+print("Create and load model...")
+model = createModel(dropout=False)
 model.load_weights("V1.h5")
-melody = generate_melody(model, 500,
-                         messages=[1],
-                         values=[60],
-                         DTs=[0])
 
+print("Create example...")
+dataMessages = json.load(open("../../../generateMelody/dataMessages.json", "r"))
+dataValues = json.load(open("../../../generateMelody/dataValues.json", "r"))
+dataDTs = json.load(open("../../../generateMelody/dataDTs.json", "r"))
+length = 501
+r1 = random.randint(0, len(dataMessages))
+r2 = random.randint(0, len(dataMessages[r1])-length-1)
+print("Generate...")
+melody = generate_melody(model, 500,
+                         messages=dataMessages[r1][r2:r2+length],
+                         values=dataValues[r1][r2:r2+length],
+                         DTs=np.round(np.asarray(dataDTs[r1][r2:r2+length])/100))
+
+print("Save..")
 file = open("melody.json", "w")
 file.write(json.dumps(melody))
 file.close()

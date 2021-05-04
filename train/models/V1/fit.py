@@ -37,9 +37,13 @@ XValues =  tf.one_hot(XValues, depth=12, axis=-1)
 YValues = np.asarray(YValues)
 XDTs = np.round(np.asarray(XDTs)/100) #tf.one_hot(np.round(np.asarray(XDTs)/100), depth=21, axis=-1)
 YDTs = np.round(np.asarray(YDTs)/100)
-del dataMessages
-del dataValues
-del dataDTs
+
+XMessages, ValXMessages = XMessages[:40000], XMessages[40000:]
+YMessages, ValYMessages = YMessages[:40000], YMessages[40000:]
+XValues, ValXValues = XValues[:40000], XValues[40000:]
+YValues, ValYValues = YValues[:40000], YValues[40000:]
+XDTs, ValXDTs = XDTs[:40000], XDTs[40000:]
+YDTs, ValYDTs = YDTs[:40000], YDTs[40000:]
 
 
 
