@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 import json
 import matplotlib.pyplot as plt
-from train.models.V1.V1 import createModel
+from train.models.V2.V2 import createModel
 
 
 gpus = tf.config.experimental.list_physical_devices('GPU')
@@ -35,15 +35,16 @@ XMessages = tf.one_hot(XMessages, depth=2, axis=-1)
 YMessages = np.asarray(YMessages)
 XValues =  tf.one_hot(XValues, depth=12, axis=-1)
 YValues = np.asarray(YValues)
-XDTs = np.round(np.asarray(XDTs)/100) #tf.one_hot(np.round(np.asarray(XDTs)/100), depth=21, axis=-1)
+XDTs = tf.one_hot(np.round(np.asarray(XDTs)/100), depth=21, axis=-1)
 YDTs = np.round(np.asarray(YDTs)/100)
 
-XMessages, ValXMessages = XMessages[:40000], XMessages[40000:]
-YMessages, ValYMessages = YMessages[:40000], YMessages[40000:]
-XValues, ValXValues = XValues[:40000], XValues[40000:]
-YValues, ValYValues = YValues[:40000], YValues[40000:]
-XDTs, ValXDTs = XDTs[:40000], XDTs[40000:]
-YDTs, ValYDTs = YDTs[:40000], YDTs[40000:]
+N = int(len(XMessages)*0.8)
+XMessages, ValXMessages = XMessages[:N], XMessages[N:]
+YMessages, ValYMessages = YMessages[:N], YMessages[N:]
+XValues, ValXValues = XValues[:N], XValues[N:]
+YValues, ValYValues = YValues[:N], YValues[N:]
+XDTs, ValXDTs = XDTs[:N], XDTs[N:]
+YDTs, ValYDTs = YDTs[:N], YDTs[N:]
 
 
 

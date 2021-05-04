@@ -12,9 +12,9 @@ slicedDataValues = []
 slicedDataDTs = []
 
 number = 0
-length = 501
+length = 50
 for messages, values, DTs in zip(dataMessages, dataValues, dataDTs):
-    if number <= 10000:
+    if number <= 100000:
         for i in range(len(messages)//length):
             number += 1
             print(number, end="\r")
