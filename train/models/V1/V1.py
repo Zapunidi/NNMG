@@ -8,36 +8,43 @@ def createModel(dropout=True):
     inputDT = tf.keras.Input(shape=(None,), name="inputDT")
     embeddingDT = tf.keras.layers.Embedding(21, 1)(inputDT)
 
-    concatenate = tf.keras.layers.concatenate([inputMessage, inputValue , embeddingDT], name="concatenateInput")
-    gruMessageInput = tf.keras.layers.GRU(32, return_sequences=True, name="gruMessageInput")(concatenate)
+    concatenateInputDT = tf.keras.layers.concatenate([inputMessage, inputValue, embeddingDT], name="concatenateInputDT")
+    gruDT1 = tf.keras.layers.GRU(32, return_sequences=True, name="gruDT1")(concatenateInputDT)
     if dropout:
-      gruMessageInput = tf.keras.layers.Dropout(0.2)(gruMessageInput)
-    gruValueInput = tf.keras.layers.GRU(64, return_sequences=True, name="gruValueInput")(concatenate)
+        gruDT1 = tf.keras.layers.Dropout(0.05)(gruDT1)
+    gruDT2 = tf.keras.layers.GRU(32, return_sequences=True, name="gruDT2")(gruDT1)
     if dropout:
-      gruValueInput = tf.keras.layers.Dropout(0.2)(gruValueInput)
-    gruDTInput = tf.keras.layers.GRU(16, return_sequences=True, name="gruDTInput")(concatenate)
-    if dropout:
-      gruDTInput = tf.keras.layers.Dropout(0.2)(gruDTInput)
+        gruDT2 = tf.keras.layers.Dropout(0.05)(gruDT2)
+    concatenateOutputDT = tf.keras.layers.concatenate([gruDT1, gruDT2], name="concatenateOutputDT")
+    outputDT = tf.keras.layers.Dense(21, activation="softmax", name="outputDT")(concatenateOutputDT)
 
-    concatenate = tf.keras.layers.concatenate([gruMessageInput, gruValueInput, gruDTInput], name="concatenate")
-    gru = tf.keras.layers.GRU(128, return_sequences=True, name="gruGlobal")(concatenate)
+    concatenateInputMessage = tf.keras.layers.concatenate([inputMessage, inputValue, embeddingDT, outputDT],
+                                                          name="concatenateInputMessage")
+    gruMessage1 = tf.keras.layers.GRU(64, return_sequences=True, name="gruMessage1")(concatenateInputMessage)
     if dropout:
-      gru = tf.keras.layers.Dropout(0.2)(gru)
+        gruMessage1 = tf.keras.layers.Dropout(0.05)(gruMessage1)
+    gruMessage2 = tf.keras.layers.GRU(64, return_sequences=True, name="gruMessage2")(gruMessage1)
+    if dropout:
+        gruMessage2 = tf.keras.layers.Dropout(0.05)(gruMessage2)
+    concatenateOutputMessage = tf.keras.layers.concatenate([gruMessage1, gruMessage2],
+                                                           name="concatenateOutputMessage")
+    outputMessage = tf.keras.layers.Dense(2, activation="softmax", name="outputMessage")(concatenateOutputMessage)
 
-    gruMessageOutput = tf.keras.layers.GRU(32, return_sequences=True, name="gruMessage")(gru)
+    concatenateInputValue = tf.keras.layers.concatenate(
+        [inputMessage, inputValue, embeddingDT, outputDT, outputMessage], name="concatenateInputValue")
+    gruValue1 = tf.keras.layers.GRU(128, return_sequences=True, name="gruValue1")(concatenateInputValue)
     if dropout:
-      gruMessageOutput = tf.keras.layers.Dropout(0.2)(gruMessageOutput)
-    gruValueOutput = tf.keras.layers.GRU(64, return_sequences=True, name="gruValue")(gru)
+        gruValue1 = tf.keras.layers.Dropout(0.05)(gruValue1)
+    gruValue2 = tf.keras.layers.GRU(128, return_sequences=True, name="gruValue2")(gruValue1)
     if dropout:
-      gruValueOutput = tf.keras.layers.Dropout(0.2)(gruValueOutput)
-    gruDTOutput = tf.keras.layers.GRU(16, return_sequences=True, name="gruDT")(gru)
+        gruValue2 = tf.keras.layers.Dropout(0.05)(gruValue2)
+    gruValue3 = tf.keras.layers.GRU(128, return_sequences=True, name="gruValue3")(gruValue2)
     if dropout:
-      gruDTOutput = tf.keras.layers.Dropout(0.2)(gruDTOutput)
+        gruValue3 = tf.keras.layers.Dropout(0.05)(gruValue3)
+    concatenateOutputValue = tf.keras.layers.concatenate([gruValue1, gruValue2, gruValue3],
+                                                         name="concatenateOutputValue")
+    outputValue = tf.keras.layers.Dense(12, activation="softmax", name="outputValue")(concatenateOutputValue)
 
-    concatenate = tf.keras.layers.concatenate([gruMessageOutput, gruValueOutput, gruDTOutput], name="concatenateOutput")
-    outputMessage = tf.keras.layers.Dense(2, activation="softmax", name="outputMessage")(concatenate)
-    outputValue = tf.keras.layers.Dense(12, activation="softmax", name="outputValue")(concatenate)
-    outputDT = tf.keras.layers.Dense(21, activation="softmax", name="outputDT")(concatenate)
     return tf.keras.Model(inputs=[inputMessage, inputValue, inputDT],
                           outputs=[outputMessage, outputValue, outputDT])
 
