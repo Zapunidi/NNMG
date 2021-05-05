@@ -58,7 +58,7 @@ model.compile(optimizer='adam', loss={"outputMessage": tf.losses.SparseCategoric
 history = model.fit({"inputMessage": XMessages, "inputValue": XValues, "inputDT": XDTs},
     {"outputMessage": YMessages, "outputValue": YValues, "outputDT": YDTs},
     batch_size=int(len(XDTs)**0.5), epochs=5)
-model.save_weights("weights/V2.h5")
+model.save_weights("weights/V1.h5")
 
 for key in history.history:
     plt.plot(history.history[key], label=key)
