@@ -33,17 +33,16 @@ for root, dirs, files in os.walk("OneTrackOneChannelData/maestro"):
 
                         msg.time = 0
 
-                    if msg.type == "note_off":
-                        messages.append(0)
-                        if 0+1 <= msg.note//12 <= 8+1:
+                    if 0 + 1 <= msg.note // 12 <= 8 + 1:
+                        if msg.type == "note_off":
+                            messages.append(0)
                             values.append(msg.note%12)
-                        DTs.append(msg.time)
+                            DTs.append(msg.time)
 
-                    if msg.type == "note_on":
-                        messages.append(1)
-                        if 0+1 <= msg.note//12 <= 8+1:
+                        if msg.type == "note_on":
+                            messages.append(1)
                             values.append(msg.note%12)
-                        DTs.append(msg.time)
+                            DTs.append(msg.time)
 
                 dataMessages.append(messages)
                 dataValues.append(values)
