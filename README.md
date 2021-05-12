@@ -22,7 +22,7 @@ Neural Network Music Generation
 
 ### generateMelody
 - generateMelody.py (копируется из train/model/V*) - генерирует мелодию, используя нейронную сеть. Создает json файл.
-- toMIDI.py - превращает json-файл в midi-файл.
+- toMIDI.py (копируется из train/model/V*) - превращает json-файл в midi-файл.
 - toWAV.py - превращает midi-файл в wav-файл, используя fluidsynth.
 
 
@@ -34,6 +34,7 @@ sliceData.py - создает датасет из последовательно
 - V**.h5 - веса модели.
 - fit.py - обучение модели.
 - generateMelody.py - генерирование мелодии.
+- toMIDI.py - превращает json-файл в midi-файл.
 
 
 
