@@ -63,18 +63,6 @@ class Instrument(object):
             if permission:
                 self.currentNote.pop(note)
 
-        # Нам нужны только сообщения note_on и note_off
-        if msg.type == "control_change":
-            if msg.control == 120 or msg.control == 123:
-                for note in self.currentNote:
-                    add_note_off(note, msg.time, False)
-                self.currentNote = {}
-            if msg.control == 64:
-                if msg.value <= 63:
-                    for note in self.currentNote:
-                        add_note_off(note, msg.time, False)
-                    self.currentNote = {}
-
         if msg.type == "note_off":
             if msg.note in self.currentNote:
                 add_note_off(msg.note, msg.time)

@@ -57,7 +57,7 @@ class IteratorMidi(object):
 
 
 number_file = 0
-for root, dirs, files in os.walk("OneTempoData"):
+for root, dirs, files in os.walk("OneTempoData/maestro"):
     for file in files:
         if (os.path.splitext(file)[1] == ".mid" or os.path.splitext(file)[1] == ".midi"):
             number_file += 1
@@ -83,20 +83,6 @@ for root, dirs, files in os.walk("OneTempoData"):
                     if permission:
                         currentNote[channel].pop(currentNote[channel].index(note))
 
-
-                # Нам нужны только сообщения note_on и note_off
-                if msg.type == "control_change":
-                    if msg.control == 120 or msg.control == 123:
-                        for note in currentNote[msg.channel]:
-                            add_note_off(msg.channel, note, time + msg.time, False)
-                        currentNote = [[] for i in range(16)]
-                        permission = True
-                    if msg.control == 64:
-                        if msg.value <= 63:
-                            for note in currentNote[msg.channel]:
-                                add_note_off(msg.channel, note, time + msg.time, False)
-                            currentNote = [[] for i in range(16)]
-                            permission = True
 
                 if msg.type == "note_off":
                     if msg.note in currentNote[msg.channel]:
