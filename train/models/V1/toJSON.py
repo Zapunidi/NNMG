@@ -8,7 +8,7 @@ dataValues = []
 dataDTs = []
 
 number_file = 0
-for root, dirs, files in os.walk("OneOctaveData/Classic"):
+for root, dirs, files in os.walk("OneTrackOneChannelData/maestro"):
     for file in files:
         if (os.path.splitext(file)[1] == ".mid" or os.path.splitext(file)[1] == ".midi"):
             number_file += 1
@@ -23,10 +23,13 @@ for root, dirs, files in os.walk("OneOctaveData/Classic"):
                 DTs = []
 
                 for msg in track:
-                    if msg.time > 2000:
+                    if msg.time > 200:
                         dataMessages.append(messages)
                         dataValues.append(values)
                         dataDTs.append(DTs)
+                        messages = []
+                        values = []
+                        DTs = []
 
                         msg.time = 0
 
