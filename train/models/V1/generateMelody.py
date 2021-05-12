@@ -20,13 +20,13 @@ if gpus:
 def generate_melody(model, num_generate, messages, values, DTs):
     melody = []
     for message, value, DT in zip(messages, values, DTs):
-        melody.append((message, value + 60, int(100 * DT)))
+        melody.append((message, value + 60, int(10 * DT)))
 
     messages = tf.one_hot(messages, depth=2, axis=-1)
     messages = tf.reshape(messages, (1, *messages.shape))
     values = tf.one_hot(np.asarray(values) % 12, depth=12, axis=-1)
     values = tf.reshape(values, (1, *values.shape))
-    DTs = np.asarray(DTs)
+    DTs = tf.one_hot(DTs, depth=21, axis=-1)
     DTs = tf.reshape(DTs, (1, *DTs.shape))
 
     model.reset_states()
@@ -43,31 +43,30 @@ def generate_melody(model, num_generate, messages, values, DTs):
 
         messages = tf.one_hot(message, depth=2, axis=-1)
         values = tf.one_hot(value, depth=12, axis=-1)
-        DTs = DT
+        DTs = tf.one_hot(DT, depth=21, axis=-1)
 
         melody.append((int(message.numpy()[0][0]),
                        int(value.numpy()[0][0] + 60),
-                       int(100 * DT.numpy()[0][0])))
+                       int(10 * DT.numpy()[0][0])))
 
     return melody
 
 
 print("Create and load model...")
 model = createModel(dropout=False)
-model.load_weights("V2.h5")
+model.load_weights("V1.h5")
 
 print("Create example...")
 dataMessages = json.load(open("dataMessages.json", "r"))
 dataValues = json.load(open("dataValues.json", "r"))
 dataDTs = json.load(open("dataDTs.json", "r"))
-length = 100
-r1 = random.randint(0, len(dataMessages))
-r2 = random.randint(0, len(dataMessages[r1]) - length - 1)
+length = 1
+r = random.randint(0, len(dataMessages))
 print("Generate...")
-melody = generate_melody(model, 2000,
-                         messages=dataMessages[r1][r2:r2 + length],
-                         values=dataValues[r1][r2:r2 + length],
-                         DTs=np.round(np.asarray(dataDTs[r1][r2:r2 + length]) / 100))
+melody = generate_melody(model, 1000,
+                         messages=dataMessages[r][:length],
+                         values=dataValues[r][:length],
+                         DTs=np.round(np.asarray(dataDTs[r][:length])/10))
 
 print("Save..")
 file = open("melody.json", "w")
