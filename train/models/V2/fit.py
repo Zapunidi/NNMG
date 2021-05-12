@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 import json
 import matplotlib.pyplot as plt
-from train.models.V1.V1 import createModel
+from train.models.V2.V2 import createModel
 
 
 gpus = tf.config.experimental.list_physical_devices('GPU')

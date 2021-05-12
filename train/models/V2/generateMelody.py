@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 import json
 import random
-from train.models.V1.V1 import createModel
+from train.models.V2.V2 import createModel
 
 gpus = tf.config.experimental.list_physical_devices('GPU')
 if gpus:
@@ -27,7 +27,7 @@ def generate_melody(model, num_generate, messages, values, octaves, DTs):
     values = tf.one_hot(np.asarray(values), depth=12, axis=-1)
     values = tf.reshape(values, (1, *values.shape))
     octaves = tf.one_hot(np.asarray(octaves), depth=8, axis=-1)
-    octaves = tf.reshape(values, (1, *octaves.shape))
+    octaves = tf.reshape(octaves, (1, *octaves.shape))
     DTs = tf.one_hot(DTs, depth=21, axis=-1)
     DTs = tf.reshape(DTs, (1, *DTs.shape))
 
@@ -60,7 +60,7 @@ def generate_melody(model, num_generate, messages, values, octaves, DTs):
 
 print("Create and load model...")
 model = createModel(dropout=False)
-model.load_weights("V1.h5")
+model.load_weights("V2.h5")
 
 print("Create example...")
 dataMessages = json.load(open("dataMessages.json", "r"))
