@@ -62,19 +62,13 @@ print("Create and load model...")
 model = createModel(dropout=False)
 model.load_weights("V2.h5")
 
-print("Create example...")
-dataMessages = json.load(open("dataMessages.json", "r"))
-dataValues = json.load(open("dataValues.json", "r"))
-dataDTs = json.load(open("dataDTs.json", "r"))
-length = 1
-r = random.randint(0, len(dataMessages))
+
 print("Generate...")
 melody = generate_melody(model, 1000,
-                         messages=dataMessages[r][:length],
-                         values=np.asarray(dataValues[r][:length])%12,
-                         octaves=np.asarray(dataValues[r][:length])//12-2,
-                         DTs=np.round(np.asarray(dataDTs[r][:length])/10))
-
+                         messages=[1],
+                         values=[0],
+                         octaves=[4],
+                         DTs=[0])
 print("Save..")
 file = open("melody.json", "w")
 file.write(json.dumps(melody))
