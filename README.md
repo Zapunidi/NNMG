@@ -17,25 +17,22 @@ Neural Network Music Generation
 Метод основан на принадлежности нот к различным каналам и изменении инструмента. 
 6. OneTrackOneChannel.py - соединяет все ноты в один трек и один канал.
 7. OneOctave.py - приводит все ноты в одну октаву.
-8. toJSON.py (копируется из train/model/V*) - создает файд json с данными для обучения.
+8. toJSON.py - создает файд json с данными для обучения.
 
 
 ### generateMelody
-- generateMelody.py (копируется из train/model/V*) - генерирует мелодию, используя нейронную сеть. Создает json файл.
-- toMIDI.py (копируется из train/model/V*) - превращает json-файл в midi-файл.
+- generateMelody.py - генерирует мелодию, используя нейронную сеть. Создает json файл.
+- toMIDI.py - превращает json-файл в midi-файл.
 - toWAV.py - превращает midi-файл в wav-файл, используя fluidsynth.
 
 
 ### train
 sliceData.py - создает датасет из последовательностей определенной длины.
 
-В папке models хранятся модели:
+В папке models хранится модель:
 - V*.py - сама модель.
 - V**.h5 - веса модели.
 - fit.py - обучение модели.
-- generateMelody.py - генерирование мелодии.
-- toMIDI.py - превращает json-файл в midi-файл.
-- toJSON.py (копируется из train/model/V*) - создает файд json с данными для обучения.
 
 
 
