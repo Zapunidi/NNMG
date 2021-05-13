@@ -36,11 +36,12 @@ for root, dirs, files in os.walk("CutData/Classic"):
                 midi = MidiFile(os.path.join(root, file))
 
                 newMidi = MidiFile()
-                for track in midi.tracks[:]:
+                for track in midi.tracks:
                     newTrack = MidiTrack()
                     for msg in track:
                         # Устанавливаем время.
                         msg.time = ticks
+                        newTrack.append(msg)
                     newMidi.tracks.append(newTrack)
 
                 path = os.path.join("WithoutTimeData", pathWithoutFirstFolder(root))
