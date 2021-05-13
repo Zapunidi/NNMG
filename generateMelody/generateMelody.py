@@ -53,7 +53,7 @@ def generate_melody(model, num_generate, messages, values, octaves):
 
 print("Create and load model...")
 model = createModel(dropout=False)
-# model.load_weights("V.h5")
+model.load_weights("V.h5")
 
 
 print("Generate...")
