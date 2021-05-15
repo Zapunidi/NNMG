@@ -1,7 +1,7 @@
 from mido import MidiFile
 
 
-path = "OneTrackData/Classic/3_anitra.mid"
+path = "OneTrackOneChannelData/Nottingham/slip_simple_chords_3.mid"
 midi = MidiFile(path)
 
 print(len(midi.tracks))

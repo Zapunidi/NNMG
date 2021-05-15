@@ -10,7 +10,7 @@ dataDTs = []
 
 ticks = round(second2tick(1, 480, 500000))
 number_file = 0
-for root, dirs, files in os.walk("OneTrackOneChannelData/maestro"):
+for root, dirs, files in os.walk("OneTrackOneChannelData/Nottingham"):
     for file in files:
         if (os.path.splitext(file)[1] == ".mid" or os.path.splitext(file)[1] == ".midi"):
             number_file += 1

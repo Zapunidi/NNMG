@@ -5,7 +5,7 @@ import tensorflow as tf
 def createModel():
     inputMessage = tf.keras.Input(shape=(None, 2), name="inputMessage")
     inputValue = tf.keras.Input(shape=(None, 12), name="inputValue")
-    inputOctave = tf.keras.Input(shape=(None, 7), name="inputOctave")
+    inputOctave = tf.keras.Input(shape=(None, 6), name="inputOctave")
     inputDT = tf.keras.Input(shape=(None, 17), name="inputDT")
 
 
@@ -13,7 +13,7 @@ def createModel():
     gruDT1 = tf.keras.layers.GRU(32, dropout=0.05, return_sequences=True, name="gruDT1")(concatenateInputDT)
     gruDT2 = tf.keras.layers.GRU(32, dropout=0.05, return_sequences=True, name="gruDT2")(gruDT1)
     concatenateOutputDT = tf.keras.layers.concatenate([gruDT1, gruDT2], name="concatenateOutputDT")
-    outputDT = tf.keras.layers.Dense(17, activation="softmax", name="outputDT")(concatenateOutputDT)
+    outputDT = tf.keras.layers.Dense(18, activation="softmax", name="outputDT")(concatenateOutputDT)
 
 
     concatenateInputMessage = tf.keras.layers.concatenate([inputMessage, inputValue, inputOctave, inputDT, outputDT], name="concatenateInputMessage")
@@ -27,7 +27,7 @@ def createModel():
     gruOctave1 = tf.keras.layers.GRU(64, dropout=0.05, return_sequences=True, name="gruOctave1")(concatenateInputOctave)
     gruOctave2 = tf.keras.layers.GRU(64, dropout=0.05, return_sequences=True, name="gruOctave2")(gruOctave1)
     concatenateOutputOctave = tf.keras.layers.concatenate([gruOctave1, gruOctave2], name="concatenateOutputOctave")
-    outputOctave = tf.keras.layers.Dense(7, activation="softmax", name="outputOctave")(concatenateOutputOctave)
+    outputOctave = tf.keras.layers.Dense(6, activation="softmax", name="outputOctave")(concatenateOutputOctave)
 
     concatenateInputValue = tf.keras.layers.concatenate([inputMessage, inputValue, inputDT, outputDT, outputMessage, outputOctave], name="concatenateInputValue")
     gruValue1 = tf.keras.layers.GRU(128, dropout=0.05, return_sequences=True, name="gruValue1")(concatenateInputValue)
