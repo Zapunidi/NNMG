@@ -16,51 +16,58 @@ if gpus:
         print(e)
 
 
-def generate_melody(model, num_generate, messages, values, octaves):
+def generate_melody(model, num_generate, messages, values, octaves, DTs):
     melody = []
-    for message, value, octave in zip(messages, values, octaves):
-        melody.append((message, value, octave))
+    for message, value, octave, DT in zip(messages, values, octaves, DTs):
+        melody.append((message, value, octave, int(60*DT)))
 
     messages = tf.one_hot(messages, depth=2, axis=-1)
     messages = tf.reshape(messages, (1, *messages.shape))
     values = tf.one_hot(np.asarray(values), depth=12, axis=-1)
     values = tf.reshape(values, (1, *values.shape))
-    octaves = tf.one_hot(np.asarray(octaves), depth=8, axis=-1)
+    octaves = tf.one_hot(np.asarray(octaves), depth=7, axis=-1)
     octaves = tf.reshape(octaves, (1, *octaves.shape))
+    DTs = tf.one_hot(DTs, depth=17, axis=-1)
+    DTs = tf.reshape(DTs, (1, *DTs.shape))
 
     model.reset_states()
 
     for i in range(num_generate):
-        PrMessage, PrValues, PrOctaves = model((messages, values, octaves))
+        PrMessage, PrValues, PrOctaves, PrDT = model((messages, values, octaves, DTs))
         PrMessage = PrMessage[0][-1]
         PrValues = PrValues[0][-1]
         PrOctaves = PrOctaves[0][-1]
+        PrDT = PrDT[0][-1]
 
         message = tf.random.categorical(tf.math.log(PrMessage.numpy().reshape(1, 2)), num_samples=1)
         value = tf.random.categorical(tf.math.log(PrValues.numpy().reshape(1, 12)), num_samples=1)
-        octave = tf.random.categorical(tf.math.log(PrOctaves.numpy().reshape(1, 8)), num_samples=1)
+        octave = tf.random.categorical(tf.math.log(PrOctaves.numpy().reshape(1, 7)), num_samples=1)
+        DT = tf.random.categorical(tf.math.log(PrDT.numpy().reshape(1, 17)), num_samples=1)
 
         messages = tf.one_hot(message, depth=2, axis=-1)
         values = tf.one_hot(value, depth=12, axis=-1)
-        octaves = tf.one_hot(octave, depth=8, axis=-1)
+        octaves = tf.one_hot(octave, depth=7, axis=-1)
+        DTs = tf.one_hot(DT, depth=17, axis=-1)
 
         melody.append((int(message.numpy()[0][0]),
                        int(value.numpy()[0][0]),
-                       int(octave.numpy()[0][0])))
+                       int(octave.numpy()[0][0]),
+                       int(60 * DT.numpy()[0][0])))
 
     return melody
 
 
 print("Create and load model...")
-model = createModel(dropout=False)
+model = createModel()
 model.load_weights("V.h5")
 
 
 print("Generate...")
 melody = generate_melody(model, 1000,
                          messages=[1],
-                         values=[0],
-                         octaves=[4])
+                         values=[1],
+                         octaves=[4],
+                         DTs=[0])
 print("Save..")
 file = open("melody.json", "w")
 file.write(json.dumps(melody))

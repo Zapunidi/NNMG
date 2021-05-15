@@ -6,14 +6,12 @@ melody = json.load(open("melody.json", "r"))
 
 
 track = MidiTrack()
-ticks = round(second2tick(1/8, 480, 500000))
 for message in melody:
     if message[0] == 1:
-        track.append(Message("note_on", note=12*message[2]+24+message[1], velocity=127, time=ticks))
+        track.append(Message("note_on", note=12*message[2]+24+message[1], velocity=127, time=int(message[3])))
 
     if message[0] == 0:
-        track.append(Message("note_off", note=12*message[2]+24+message[1], velocity=127, time=ticks))
-
+        track.append(Message("note_off", note=12*message[2]+24+message[1], velocity=127, time=int(message[3])))
 
 midi = MidiFile()
 midi.tracks.append(track)
