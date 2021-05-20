@@ -5,14 +5,14 @@ import tensorflow as tf
 def createModel():
     inputMessage = tf.keras.Input(shape=(None, 2), name="inputMessage")
     inputValue = tf.keras.Input(shape=(None, 60), name="inputValue")
-    inputDT = tf.keras.Input(shape=(None, 17), name="inputDT")
+    inputDT = tf.keras.Input(shape=(None, 9), name="inputDT")
 
 
     concatenateInputDT = tf.keras.layers.concatenate([inputMessage, inputValue, inputDT], name="concatenateInputDT")
     gruDT1 = tf.keras.layers.GRU(32, dropout=0.1, return_sequences=True, name="gruDT1")(concatenateInputDT)
     gruDT2 = tf.keras.layers.GRU(32, dropout=0.1, return_sequences=True, name="gruDT2")(gruDT1)
     concatenateOutputDT = tf.keras.layers.concatenate([gruDT1, gruDT2], name="concatenateOutputDT")
-    outputDT = tf.keras.layers.Dense(17, activation="softmax", name="outputDT")(concatenateOutputDT)
+    outputDT = tf.keras.layers.Dense(9, activation="softmax", name="outputDT")(concatenateOutputDT)
 
 
     concatenateInputMessage = tf.keras.layers.concatenate([inputMessage, inputValue, inputDT, outputDT], name="concatenateInputMessage")

@@ -1,6 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import json
+import random
 from train.models.V import createModel
 
 gpus = tf.config.experimental.list_physical_devices('GPU')
@@ -19,13 +20,13 @@ if gpus:
 def generate_melody(model, num_generate, messages, values, DTs):
     melody = []
     for message, value, DT in zip(messages, values, DTs):
-        melody.append((message, 36+value, int(60*DT)))
+        melody.append((message, 36+value, int(120*DT)))
 
     messages = tf.one_hot(messages, depth=2, axis=-1)
     messages = tf.reshape(messages, (1, *messages.shape))
     values = tf.one_hot(np.asarray(values), depth=60, axis=-1)
     values = tf.reshape(values, (1, *values.shape))
-    DTs = tf.one_hot(DTs, depth=17, axis=-1)
+    DTs = tf.one_hot(DTs, depth=9, axis=-1)
     DTs = tf.reshape(DTs, (1, *DTs.shape))
 
     model.reset_states()
@@ -38,15 +39,15 @@ def generate_melody(model, num_generate, messages, values, DTs):
 
         message = tf.random.categorical(tf.math.log(PrMessage.numpy().reshape(1, 2)), num_samples=1)
         value = tf.random.categorical(tf.math.log(PrValues.numpy().reshape(1, 60)), num_samples=1)
-        DT = tf.random.categorical(tf.math.log(PrDT.numpy().reshape(1, 17)), num_samples=1)
+        DT = tf.random.categorical(tf.math.log(PrDT.numpy().reshape(1, 9)), num_samples=1)
 
         messages = tf.one_hot(message, depth=2, axis=-1)
         values = tf.one_hot(value, depth=60, axis=-1)
-        DTs = tf.one_hot(DT, depth=17, axis=-1)
+        DTs = tf.one_hot(DT, depth=9, axis=-1)
 
         melody.append((int(message.numpy()[0][0]),
                        int(36+value.numpy()[0][0]),
-                       int(60 * DT.numpy()[0][0])))
+                       int(120 * DT.numpy()[0][0])))
 
     return melody
 
@@ -59,7 +60,7 @@ model.load_weights("V.h5")
 print("Generate...")
 melody = generate_melody(model, 1000,
                          messages=[1],
-                         values=[20],
+                         values=[random.randint(0, 59)],
                          DTs=[0])
 print("Save..")
 file = open("melody.json", "w")

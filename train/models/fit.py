@@ -37,8 +37,8 @@ XMessages = tf.one_hot(XMessages, depth=2, axis=-1)
 YMessages = np.asarray(YMessages)
 XValues = tf.one_hot(XValues, depth=60, axis=-1)
 YValues = np.asarray(YValues)
-XDTs = tf.one_hot(np.round(np.asarray(XDTs) / 60), depth=17, axis=-1)
-YDTs = np.round(np.asarray(YDTs) / 60).astype(int)
+XDTs = tf.one_hot(np.round(np.asarray(XDTs) / 120), depth=9, axis=-1)
+YDTs = np.round(np.asarray(YDTs) / 120).astype(int)
 
 N = int(len(XMessages) * 0.8)
 XMessages, ValXMessages = XMessages[:N], XMessages[N:]
